@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pintar en la pantalla</title>
+</head>
+    <body>
+        <style>
+            canvas {
+                width: 1000px;
+                height: 700px;
+                background-color: #0D0909;
+            }
+        </style>
+        <canvas id="pizarra"></canvas>
+        <form action="127.0.0.1:5000/?" method="get">
+            <label for="color">Choose a color:</label><br>
+            <input type="radio" id="color" name="color" value="blue">
+            <label for="blue">Blue</label><br>
+            <input type="radio" id="color" name="color" value="white">
+            <label for="white">White</label><br>
+            <button type="submit" value="Submit">Submit</button>
+          </form>
+          <script>
+              let miCanvas = document.querySelector('#pizarra');
+              let lineas = [];
+              let correccionX = 0;
+              let correccionY = 0;
+              let pintarLinea = false;
+              let nuevaPosicionX = 0;
+              let nuevaPosicionY = 0;
+      
+              let posicion = miCanvas.getBoundingClientRect()
+              correccionX = posicion.x;
+              correccionY = posicion.y;
+      
+              var formData = new FormData(document.querySelector('form'))
+      
+              miCanvas.width = 1000;
+              miCanvas.height = 700;
+      
+              function empezarDibujo () {
+                  pintarLinea = true;
+                  lineas.push([]);
+              };
+      
+              function guardarLinea() {
+                  lineas[lineas.length - 1].push({
+                      x: nuevaPosicionX,
+                      y: nuevaPosicionY
+                  });
+              }
+      
+              function dibujarLinea (event) {
+                  event.preventDefault();
+                  if (pintarLinea) {
+                      let ctx = miCanvas.getContext('2d')
+                      ctx.lineJoin = ctx.lineCap = 'round';
+                      ctx.lineWidth = 10;
+                      ctx.strokeStyle = '#00f';
+                      if (event.changedTouches == undefined) {
+                          nuevaPosicionX = event.layerX;
+                          nuevaPosicionY = event.layerY;
+                      } else {
+                          nuevaPosicionX = event.changedTouches[0].pageX - correccionX;
+                          nuevaPosicionY = event.changedTouches[0].pageY - correccionY;
+                      }
+                      guardarLinea();
+                      ctx.beginPath();
+                      lineas.forEach(function (segmento) {
+                          ctx.moveTo(segmento[0].x, segmento[0].y);
+                          segmento.forEach(function (punto, index) {
+                              ctx.lineTo(punto.x, punto.y);
+                          });
+                      });
+                      ctx.stroke();
+                  }
+              }
+      
+              function pararDibujar () {
+                  pintarLinea = false;
+                  guardarLinea();
+              }
+      
+              miCanvas.addEventListener('mousedown', empezarDibujo, false);
+              miCanvas.addEventListener('mousemove', dibujarLinea, false);
+              miCanvas.addEventListener('mouseup', pararDibujar, false);
+              miCanvas.addEventListener('touchstart', empezarDibujo, false);
+              miCanvas.addEventListener('touchmove', dibujarLinea, false);
+          </script>
+    </body>
+</html>

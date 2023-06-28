@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pintar en la pantalla</title>
+    <script src="../index.js" defer></script>
+</head>
+    <body>
+        <style>
+            canvas {
+                width: 1000px;
+                height: 700px;
+                background-color: #0D0909;
+            }
+        </style>
+        <canvas id="pizarra"></canvas>
+        <form action="http://127.0.0.1:5000/?" method="get">
+            <label for="color">Choose a color:</label><br>
+            <input type="radio" id="color" name="color" value="blue">
+            <label for="blue">Blue</label><br>
+            <input type="radio" id="color" name="color" value="white">
+            <label for="white">White</label><br>
+            <button type="submit" value="Submit">Submit</button>
+          </form>
+    </body>
+</html>

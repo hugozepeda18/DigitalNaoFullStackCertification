@@ -65,12 +65,28 @@ app.post('/restaurante', async (req, res) => {
   }
 })
 
+app.get('/restaurante/:calificacion', async (req, res) => {
+  const grade = req.params.calificacion
+  console.log(grade)
+  try{
+    const data = await restaurantes.aggregate([
+      {
+        $match: { calificacion: grade }
+     }
+    ])
+    res.send(data)
+  }
+  catch(error){
+      res.status(500).json({message: error.message})
+  }
+});
+
 app.patch('/restaurante/comment', async (req, res) => {
   try{
     const name = req.body.name
     const namePerson = req.body.namePerson
     const comment = req.body.comment
-
+    
     const data = await restaurantes.findOneAndUpdate({
       name
     }, { comments : [{

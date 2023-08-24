@@ -2,14 +2,12 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Book } from './book.entity';
-import { UsersService } from './../usuarios/users.service';
 
 @Injectable()
 export class BooksService {
   constructor(
     @InjectRepository(Book)
     private booksRepository: Repository<Book>,
-    private readonly usersService: UsersService
   ) {}
 
   findAll(): Promise<Book[]> {
@@ -34,21 +32,17 @@ export class BooksService {
   }
 
   async rent(idUsuario: number, idLibro: number) {
-    let usuario = this.usersService.findOne(Number(idUsuario))
-    if (usuario) {
-      const book = {
-        id: idLibro,
-        prestado: true,
-        id_alumno_prestamos: idUsuario
-      }
-      const booking = await this.booksRepository.preload(book)
-      if (booking) {
-        return this.booksRepository.save(booking)
-      } else {
-        throw new NotFoundException(`No se encuentra el libro ${idLibro}`) 
-      }
+    const book = {
+      id: idLibro,
+      prestado: true,
+      id_alumno_prestamos: idUsuario
+    }
+    const booking = await this.booksRepository.preload(book)
+    if (booking) {
+      return this.booksRepository.save(booking)
     } else {
-      throw new NotFoundException(`No se encuentra el usuario ${idUsuario}`) 
+      throw new NotFoundException(`No se encuentra el libro ${idLibro}`) 
     }
   }
 }
+

@@ -7,7 +7,7 @@ export class Book {
   id: number;
 
   @Column()
-  libro: string;
+  nombre: string;
 
   @Column()
   autor: string;
@@ -17,5 +17,6 @@ export class Book {
 
   @OneToOne(() => User)
   @JoinColumn()
-  id_alumno_prestado: User;
+  id_user: User;
 }
+
